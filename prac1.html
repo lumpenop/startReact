@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리액트 시간</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="./template.css">
+</head>
+<body>
+    <div id="react-wrap"></div> 
+    <script type="text/babel">
+        class Header extends React.Component{
+            render(){
+                return(
+                    <div className="header">
+                        {this.props.children}    
+                    </div>
+                )
+            }
+        }
+        class Logo extends React.Component{
+            render(){
+                return(
+                    <h1>Logo</h1>
+                )
+            }
+        }
+        class Menu extends React.Component{
+            render(){
+                return(
+                    <ul>
+                        {this.props.children}
+                    </ul>
+                )
+            }
+        }
+
+        class MenuList extends React.Component{
+            
+            render(){
+                return(
+                    <li>{this.props.list}</li>
+                )
+            }
+        }
+
+        class Util extends React.Component{
+            login = () => {
+                return(
+                    <>
+                        <li>login</li>
+                        <li>logout</li>
+                    </>
+                )
+            }
+
+            logout = () => {
+                return(
+                    <>
+                        <li className="blue" onClick={this.props.onDelete}>logout</li>
+                        <li className="blue">info</li>
+                    </>
+                )
+            }
+            render(){
+                return(
+                    <ul>
+                        {this.props.isLogin ? this.logout() : this.login()}    
+                    </ul>
+                )
+            }
+        }
+
+        class LoginBox extends React.Component{
+            state = {
+                userid : '',
+                userpw : '',
+            }
+
+            changeHandler = (e) => {
+                this.setState({[e.target.name]:e.target.value})
+            }
+            submitHandler = (e) => {
+                e.preventDefault()
+                this.props.onCreate(this.state)
+                this.setState({
+                    userid:'',
+                    userpw:'',
+                })
+            }
+
+            render(){
+                return(
+                    <form onSubmit={this.submitHandler}>
+                        <input 
+                            type="text" 
+                            placeholder="아이디를 입력해주세요"
+                            value={this.state.userid}
+                            onChange={this.changeHandler}
+                            name="userid"
+                        />
+                        <input 
+                            type="password" 
+                            placeholder="비밀번호를 입력해주세요"
+                            value={this.state.userpw}
+                            onChange={this.changeHandler}
+                            name="userpw"
+                        />
+                        <input type="submit" value="로그인" />    
+                    </form>
+                )
+            }
+        }
+
+        class App extends React.Component{
+            state = {
+                menuList:'menu1',
+                isLogin:false,
+            }
+            loginInfo = (data) => {
+                console.log(data)
+                console.log(this.state.isLogin)
+                data.userid==="admin" && data.userpw==="admin" ?
+                    this.setState({
+                        isLogin:true
+                    }) : null
+            }
+            logout = () =>{
+                this.setState({
+                    isLogin:false
+                })
+            }
+            render(){
+                return(
+                    <Header>
+                        <Logo />
+                        <Menu>
+                            <MenuList list = {this.state.menuList} />
+                        </Menu>
+                        <Util isLogin={this.state.isLogin} onDelete={this.logout} />
+                        {this.state.isLogin ? '' : <LoginBox onCreate={this.loginInfo} />}
+                    </Header>    
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.querySelector('#react-wrap')
+        )
+    </script>
+</body>
+</html>
